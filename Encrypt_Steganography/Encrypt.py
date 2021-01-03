@@ -103,6 +103,7 @@ def encode_message_two_input_cipher(message):
 
 
 def encode_lsb_image(image_file_name, new_image_file):
+    image = None
     try:
         image = Image.open(image_file_name, "r")
     except FileNotFoundError:
@@ -148,9 +149,8 @@ def decode_message_two_input_cipher(message):
     return decoded_message
 
 
-def decode_lsb_image():
-    img_file_name = input("Enter image with message to decrypt: ")
-    image = Image.open(img_file_name, "r")
+def decode_lsb_image(image_file_name):
+    image = Image.open(image_file_name, "r")
 
     encoded_message = ''
     image_data = image.getdata()
@@ -171,17 +171,21 @@ def decode_lsb_image():
         character_to_add = chr(int(binary_string, 2))
         encoded_message += character_to_add
         if pixels[-1] % 2 != 0:
+            encoded_message = decode_message_two_input_cipher(encoded_message)
             return encoded_message
 
-        pixels = pixel_iterator.__next__()[:3]
+        pixel_iterator.__next__()[:3]
 
 
 def main():
 
     if len(sys.argv) == 5 and sys.argv[1] == '-i' and sys.argv[3] == '-o':
         encode_lsb_image(sys.argv[2], sys.argv[4])
+    elif len(sys.argv) == 3 and sys.argv[1] == '-d':
+        print('Message: ' + decode_lsb_image(sys.argv[2]))
     else:
-        print('Incorrect argument format: -i input_file -o output_file')
+        print('Incorrect argument format, Encrypt: -i input_file -o output_file')
+        print('Decrypt: -d input_file')
 
 
 if __name__ == '__main__':
